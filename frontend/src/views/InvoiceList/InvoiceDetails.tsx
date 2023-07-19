@@ -1,4 +1,4 @@
-import { TableContainer, Paper, Table, TableRow, TableCell, TableBody, Button, Box, Modal, Typography, Input, IconButton } from "@mui/material"
+import { TableContainer, Paper, Table, TableRow, TableCell, TableBody, Button, Box, Modal, Typography, Input, IconButton, CircularProgress } from "@mui/material"
 import { useEffect, useState } from "react";
 import { Invoice, InvoiceStateTypes } from "../../types/Invoice.type";
 import { completeInvoice, payInvoice, shipInvoice, updateInvoice } from "../../utils/api";
@@ -36,10 +36,26 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
+    const handleSubmit = (state: InvoiceStateTypes) => {
+        if (state === InvoiceStateTypes.PAID) {
+            payInvoice(invoiceDetail.id);
+            setInvoiceState(InvoiceStateTypes.PAID);
+            handleClose();
+        }
+        if (state === InvoiceStateTypes.SHIPPED) {
+            shipInvoice(invoiceDetail.id);
+            setInvoiceState(InvoiceStateTypes.SHIPPED)
+        }
+        if (state === InvoiceStateTypes.COMPLETE) {
+            completeInvoice(invoiceDetail.id);
+            setInvoiceState(InvoiceStateTypes.COMPLETE)
+        }
+        setOpenSnackbar(true)
+    };
     const refreshPage = () => {
         // refresh page on back button to sync data
         window.location.reload();
-      }
+    }
     useEffect(() => {
         viewInvoice()
     }, [invoiceState])
@@ -60,19 +76,25 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
                     <TableRow>
                         <TableCell align="left">Amount</TableCell>
                         <TableCell align="right">
-                            {isEditable ? (
-                                <Input
-                                    sx={{ height: '15px' }}
-                                    type="text"
-                                    value={invoiceDetail.amount}
-                                    onChange={(event) => handleAmountChange(event.target.value)}
-                                    onBlur={() => { setIsEditable(false); updateInvoice(invoiceDetail.id, invoiceDetail.amount ? invoiceDetail.amount : 1) }}
-                                />
+                            {isEditable && invoiceDetail.state === InvoiceStateTypes.CREATED ? (
+                                <>
+                                    <Button sx={{ height: '5px', textTransform: 'none' }} onClick={() => { setIsEditable(false); updateInvoice(invoiceDetail.id, invoiceDetail.amount ? invoiceDetail.amount : 1) }}
+                                    >
+                                        Update Price
+                                    </Button>
+                                    <Input
+                                        sx={{ height: '15px', width: '80px', textAlign: 'center', fontSize: '0.875rem' }}
+                                        type="text"
+                                        value={invoiceDetail.amount}
+                                        onChange={(event) => handleAmountChange(event.target.value)}
+                                    />
+                                </>
+
                             ) : (
                                 <>
                                     {invoiceDetail.state === InvoiceStateTypes.CREATED &&
-                                        <IconButton                                     data-testid="edit-button"
-                                        sx={{ height: '15px' }}
+                                        <IconButton data-testid="edit-button"
+                                            sx={{ height: '15px' }}
                                             onClick={() => setIsEditable(true)}>
                                             <Edit />
                                         </IconButton>
@@ -98,7 +120,7 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
             {/* different invoice state scenarios */}
             {invoiceDetail.state === InvoiceStateTypes.CREATED &&
                 <>
-                    <Button data-testid="submit-button" onClick={() => { handleOpen(); () => payInvoice(invoiceDetail.id) }}>PAY</Button>
+                    <Button sx={{ m: 1 }} variant="outlined" data-testid="submit-button" onClick={() => { handleOpen(); () => payInvoice(invoiceDetail.id) }}>PAY</Button>
                     {/* use modal only to confirm payment of invoice, other actions submitted with one button click */}
                     {/* pass appropriate data to show correct snackbar depending on invoice state */}
                     <Modal
@@ -109,10 +131,10 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
                         aria-describedby="modal-modal-description"
                     >
                         <Box sx={style}>
-                            <Typography sx={{fontSize:'0.875rem'}}id="modal-modal-title" variant="h6" component="h2">
+                            <Typography sx={{ fontSize: '0.875rem' }} id="modal-modal-title" variant="h6" component="h2">
                                 Are you sure you want to mark Invoice {invoiceDetail.invoice_number} as paid?
                             </Typography>
-                            <Button onClick={() => { payInvoice(invoiceDetail.id); setOpenSnackbar(true); setInvoiceState(InvoiceStateTypes.PAID);handleClose()}}>Confirm</Button>
+                            <Button onClick={() => handleSubmit(InvoiceStateTypes.PAID)}>Confirm</Button>
                             <Button onClick={() => handleClose()}>Cancel</Button>
                         </Box>
                     </Modal>
@@ -121,21 +143,19 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
             }
             {invoiceDetail.state === InvoiceStateTypes.PAID &&
                 <>
-                    <Button data-testid="submit-button" onClick={() => { shipInvoice(invoiceDetail.id); setOpenSnackbar(true); setInvoiceState(InvoiceStateTypes.SHIPPED) }}>SHIP</Button>
+                    <Button disabled={openSnackbar} sx={{ m: 1 }} variant="outlined" data-testid="submit-button" onClick={() => handleSubmit(InvoiceStateTypes.SHIPPED)}> {openSnackbar ? <CircularProgress size='1.5rem' /> : 'SHIP'}</Button>
                     <SnackBar open={openSnackbar} handleClose={handleCloseSnackbar} message={`Invoice ${invoiceDetail.invoice_number} is Paid`} />
                 </>
-
             }
             {invoiceDetail.state === InvoiceStateTypes.SHIPPED &&
                 <>
-                    <Button data-testid="submit-button" onClick={() => { completeInvoice(invoiceDetail.id); setOpenSnackbar(true); setInvoiceState(InvoiceStateTypes.COMPLETE) }}>COMPLETE</Button>
+                    <Button disabled={openSnackbar} sx={{ m: 1 }} variant="outlined" data-testid="submit-button" onClick={() => handleSubmit(InvoiceStateTypes.COMPLETE)}>{openSnackbar ? <CircularProgress size='1.5rem' /> : 'COMPLETE'}</Button>
                     <SnackBar open={openSnackbar} handleClose={handleCloseSnackbar} message={`Invoice ${invoiceDetail.invoice_number} is Shipped`} />
                 </>
-
             }
             {(invoiceDetail.state === InvoiceStateTypes.COMPLETE) &&
                 <>
-                    <Button data-testid="submit-button" disabled sx={{ '&:hover': { backgroundColor: 'rgba(149, 157, 197, 0.2)' } }}>COMPLETED</Button>
+                    <Button variant="outlined" data-testid="submit-button" disabled sx={{ '&:hover': { backgroundColor: 'rgba(149, 157, 197, 0.2)' }, m: 1 }}>{openSnackbar ? <CircularProgress size='1.5rem' /> : 'COMPLETED'}</Button>
                     <SnackBar open={openSnackbar} handleClose={handleCloseSnackbar} message={`Invoice ${invoiceDetail.invoice_number} is Complete`} />
                 </>
             }
