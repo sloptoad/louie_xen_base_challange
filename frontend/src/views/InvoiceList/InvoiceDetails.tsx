@@ -124,7 +124,7 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
                     {/* use modal only to confirm payment of invoice, other actions submitted with one button click */}
                     {/* pass appropriate data to show correct snackbar depending on invoice state */}
                     <Modal
-                        data-testId="modal"
+                        data-testid="modal"
                         open={open}
                         onClose={handleClose}
                         aria-labelledby="modal-modal-title"
