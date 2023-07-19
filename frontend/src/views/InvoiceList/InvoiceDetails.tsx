@@ -120,7 +120,7 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
             {/* different invoice state scenarios */}
             {invoiceDetail.state === InvoiceStateTypes.CREATED &&
                 <>
-                    <Button sx={{ m: 1 }} variant="outlined" data-testid="submit-button" onClick={() => { handleOpen(); () => payInvoice(invoiceDetail.id) }}>PAY</Button>
+                    <Button sx={{ m: 1, height: '40px' }} variant="outlined" data-testid="submit-button" onClick={() => { handleOpen(); () => payInvoice(invoiceDetail.id) }}>PAY</Button>
                     {/* use modal only to confirm payment of invoice, other actions submitted with one button click */}
                     {/* pass appropriate data to show correct snackbar depending on invoice state */}
                     <Modal
@@ -143,19 +143,19 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
             }
             {invoiceDetail.state === InvoiceStateTypes.PAID &&
                 <>
-                    <Button disabled={openSnackbar} sx={{ m: 1 }} variant="outlined" data-testid="submit-button" onClick={() => handleSubmit(InvoiceStateTypes.SHIPPED)}> {openSnackbar ? <CircularProgress size='1.5rem' /> : 'SHIP'}</Button>
+                    <Button disabled={openSnackbar} sx={{ m: 1, height:'40px' }} variant="outlined" data-testid="submit-button" onClick={() => handleSubmit(InvoiceStateTypes.SHIPPED)}> {openSnackbar ? <CircularProgress size='1.5rem' /> : 'SHIP'}</Button>
                     <SnackBar open={openSnackbar} handleClose={handleCloseSnackbar} message={`Invoice ${invoiceDetail.invoice_number} is Paid`} />
                 </>
             }
             {invoiceDetail.state === InvoiceStateTypes.SHIPPED &&
                 <>
-                    <Button disabled={openSnackbar} sx={{ m: 1 }} variant="outlined" data-testid="submit-button" onClick={() => handleSubmit(InvoiceStateTypes.COMPLETE)}>{openSnackbar ? <CircularProgress size='1.5rem' /> : 'COMPLETE'}</Button>
+                    <Button disabled={openSnackbar} sx={{ m: 1, height:'40px' }} variant="outlined" data-testid="submit-button" onClick={() => handleSubmit(InvoiceStateTypes.COMPLETE)}>{openSnackbar ? <CircularProgress size='1.5rem' /> : 'COMPLETE'}</Button>
                     <SnackBar open={openSnackbar} handleClose={handleCloseSnackbar} message={`Invoice ${invoiceDetail.invoice_number} is Shipped`} />
                 </>
             }
             {(invoiceDetail.state === InvoiceStateTypes.COMPLETE) &&
                 <>
-                    <Button variant="outlined" data-testid="submit-button" disabled sx={{ '&:hover': { backgroundColor: 'rgba(149, 157, 197, 0.2)' }, m: 1 }}>{openSnackbar ? <CircularProgress size='1.5rem' /> : 'COMPLETED'}</Button>
+                    <Button variant="outlined" data-testid="submit-button" disabled sx={{ '&:hover': { backgroundColor: 'rgba(149, 157, 197, 0.2)' }, m: 1, height: '40px' }}>{openSnackbar ? <CircularProgress size='1.5rem' /> : 'COMPLETED'}</Button>
                     <SnackBar open={openSnackbar} handleClose={handleCloseSnackbar} message={`Invoice ${invoiceDetail.invoice_number} is Complete`} />
                 </>
             }
