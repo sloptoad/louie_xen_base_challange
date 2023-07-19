@@ -1,5 +1,3 @@
-
-
 import { Snackbar, Alert } from "@mui/material";
 // reusable alert pop up
 function SnackBar(props: { open: any, handleClose: any, message:string }) {

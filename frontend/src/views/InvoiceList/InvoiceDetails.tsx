@@ -6,7 +6,6 @@ import SnackBar from "../../components/Snackbar";
 import Edit from '@mui/icons-material/Edit';
 import { formatter } from "../../utils/common/formatter";
 
-
 const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: InvoiceDetailsProps) => {
     const [open, setOpen] = useState(false);
     const [invoiceState, setInvoiceState] = useState('')
@@ -19,7 +18,6 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
             ...prevInvoiceDetail,
             amount: value
         }));
-
     };
 
     const style = {
@@ -38,7 +36,7 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
-    function refreshPage() {
+    const refreshPage = () => {
         // refresh page on back button to sync data
         window.location.reload();
       }
@@ -97,7 +95,7 @@ const InvoiceDetails = ({ viewInvoice, invoiceDetail, setInvoiceDetail }: Invoic
 
                 </TableBody>
             </Table>
-            {/* different invoice state scenrios */}
+            {/* different invoice state scenarios */}
             {invoiceDetail.state === InvoiceStateTypes.CREATED &&
                 <>
                     <Button data-testid="submit-button" onClick={() => { handleOpen(); () => payInvoice(invoiceDetail.id) }}>PAY</Button>

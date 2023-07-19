@@ -6,7 +6,6 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "types": ["cypress", "@testing-library/cypress"],
-    
 
     /* Bundler mode */
     "moduleResolution": "node",
