@@ -9,12 +9,11 @@ import {
   TableHead,
   TableRow
 } from '@mui/material'
-
 import { Invoice } from '../../types/Invoice.type'
 import { fetchInvoices } from '../../utils/fetchInvoices'
-
 import InvoiceDetails from './InvoiceDetails'
 import { formatter } from '../../utils/common/formatter'
+
 const initialRows = fetchInvoices()
 
 const InvoiceList = () => {
