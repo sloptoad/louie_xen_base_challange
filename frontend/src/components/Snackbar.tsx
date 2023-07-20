@@ -1,10 +1,9 @@
 import { Snackbar, Alert } from "@mui/material";
-// reusable alert pop up
-function SnackBar(props: { open: any, handleClose: any, message:string }) {
-  const { open, handleClose,message } = props;
+// Reusable alert pop up
+const SnackBar = ({ open, handleClose, message }: SnackBarProps) => {
   return (
     <div>
-      <Snackbar data-testid={'snackbar'}open={open} autoHideDuration={2000} onClose={handleClose}>
+      <Snackbar data-testid={'snackbar'} open={open} autoHideDuration={2000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
           {message}
         </Alert>
@@ -12,5 +11,10 @@ function SnackBar(props: { open: any, handleClose: any, message:string }) {
     </div>
   );
 }
-
+// Define the snackbar props interface
+interface SnackBarProps {
+  open: boolean;
+  handleClose: () => void;
+  message: string;
+}
 export default SnackBar;
